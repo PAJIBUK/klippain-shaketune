@@ -10,34 +10,6 @@ K_SHAKETUNE_VENV_PATH="${HOME}/klippain_shaketune-env"
 set -eu
 export LC_ALL=C
 
-
-function preflight_checks {
-    if [ "$EUID" -eq 0 ]; then
-        echo "[PRE-CHECK] This script must not be run as root!"
-        exit -1
-    fi
-
-    if ! command -v python3 &> /dev/null; then
-        echo "[ERROR] Python 3 is not installed. Please install Python 3 to use the Shake&Tune module!"
-        exit -1
-    fi
-
-    if [ "$(sudo systemctl list-units --full -all -t service --no-legend | grep -F 'klipper.service')" ]; then
-        printf "[PRE-CHECK] Klipper service found! Continuing...\n\n"
-    else
-        echo "[ERROR] Klipper service not found, please install Klipper first!"
-        exit -1
-    fi
-
-    install_package_requirements
-}
-
-# Function to check if a package is installed
-function is_package_installed {
-    dpkg -s "$1" &> /dev/null
-    return $?
-}
-
 function install_package_requirements {
     packages=("python3-venv" "libopenblas-dev" "libatlas-base-dev")
     packages_to_install=""
